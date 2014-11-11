@@ -21,15 +21,19 @@ namespace lox {
 
 std::ostream& operator<<(std::ostream& os, const lox::fishCommand& fish)
 {
-    os << fish.command << "/" << fish.when << "/" << fish.paths; 
+    os << "Command: " << fish.command;
     return os;
 }
 
 
 int main(int argc, char const *argv[])
 {
+	std::string fishHistoryFilePath = "";
+	fishHistoryFilePath  += getenv("HOME");
+	fishHistoryFilePath  += "/.config/fish/fish_history";
+
 	std::fstream fishHistoryFile;
-	fishHistoryFile.open("/Users/davidnuon/.config/fish/fish_history");
+	fishHistoryFile.open(fishHistoryFilePath);
 	std::string line;
 	std::string buffy;
 
@@ -43,9 +47,9 @@ int main(int argc, char const *argv[])
 	}
 
 	bool running = true;
-	#define next_line running = getline(fishHistoryFile, line)
+	#define nextline() running = getline(fishHistoryFile, line)
 	while(running) {
-		next_line;
+		nextline();
 		idx++;
 		fishList.push_back(lox::fishCommand());
 		fishList[idx].command = line;
