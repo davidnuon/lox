@@ -2,6 +2,10 @@
 #include <fstream>
 #include <vector>
 
+#ifdef linux
+#include <stdlib.h>
+#endif
+
 namespace lox {
 	const int FISH_INIT = 0x00;
 	const int FISH_COMMAND = 0x10;
@@ -33,7 +37,7 @@ int main(int argc, char const *argv[])
 	fishHistoryFilePath  += "/.config/fish/fish_history";
 
 	std::fstream fishHistoryFile;
-	fishHistoryFile.open(fishHistoryFilePath);
+	fishHistoryFile.open(fishHistoryFilePath.c_str());
 	std::string line;
 	std::string buffy;
 
