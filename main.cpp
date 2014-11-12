@@ -7,28 +7,65 @@
 #endif
 
 namespace lox {
-	const int FISH_INIT = 0x00;
-	const int FISH_COMMAND = 0x10;
-	const int FISH_TIME = 0x20;
-	int fish_state = FISH_INIT;
+	enum FISH_STATE {
+		FISH_INIT,
+		FISH_COMMAND,
+		FISH_TIME,
+		FISH_PATH
+	};
+
+	FISH_STATE fish_state = FISH_INIT;
 	struct fishCommand
 	{
 		std::string when;
 		std::string command;
-		std::string paths;	
+		std::vector<std::string> paths;	
 	};
 
-	inline void transition(int state) {
+	inline void transition(FISH_STATE state) {
 		fish_state = state;
 	}
 }
 
-std::ostream& operator<<(std::ostream& os, const lox::fishCommand& fish)
-{
-    os << "Command: " << fish.command;
-    return os;
+std::string trim(std::string subject) {
+	std::string out; 
+	int front_idx = 0;
+	int back_idx  = subject.length() - 1;
+	char c;
+
+	// Trim the front
+	while(true) 
+	{
+		c = subject.at(front_idx);
+		if(isspace(c)) {
+			front_idx++;
+		} else {
+			break;
+		}
+	}	
+	// Trim the back
+	while(true) 
+	{
+		c = subject.at(back_idx);
+		if(isspace(c)) {
+			back_idx--;
+		} else {
+			break;
+		}
+	}
+
+	return subject.substr(front_idx, back_idx);
 }
 
+std::ostream& operator<<(std::ostream& os, const lox::fishCommand& fish)
+{
+    os << "(Command): " << fish.command << " (When): " << fish.when << " \n";
+    for (int i = 0; i < fish.paths.size(); ++i)
+    {
+    	os << fish.paths[i] << "\n";
+    }
+    return os;
+}
 
 int main(int argc, char const *argv[])
 {
@@ -51,16 +88,61 @@ int main(int argc, char const *argv[])
 	}
 
 	bool running = true;
-	#define nextline() running = getline(fishHistoryFile, line)
-	while(running) {
-		nextline();
-		idx++;
-		fishList.push_back(lox::fishCommand());
-		fishList[idx].command = line;
+	#define nextline() running = getline(fishHistoryFile, line); if (line.length() == 0) break;
+	#define current_history() fishList[idx]
+	while(running) 
+	{
+		switch(lox::fish_state) 
+		{
+			case lox::FISH_INIT:
+				nextline();
+				if(line.find("- cmd:") == 0) 
+				{
+					lox::transition(lox::FISH_COMMAND);	
+				}
+				break;
+			case lox::FISH_COMMAND:
+				idx++;
+				fishList.push_back(lox::fishCommand());
+				current_history().command = trim(line.replace(0, 6, ""));				
+
+				nextline();
+				if(line.find("when:")) 
+				{
+					lox::transition(lox::FISH_TIME);
+				}
+				break;
+			case lox::FISH_TIME:		
+				current_history().when = trim(line.replace(0, 9, ""));
+				nextline();
+				if(line.find("paths:")) 
+				{
+					lox::transition(lox::FISH_PATH);
+				}
+
+				if(line.find("- cmd:") == 0) 
+				{
+					lox::transition(lox::FISH_COMMAND);
+				}
+
+				break;
+			case lox::FISH_PATH:
+				nextline();
+				if(line.find("- cmd:") == 0) 
+				{
+					lox::transition(lox::FISH_COMMAND);
+				} else {
+					current_history().paths.push_back(trim(line.replace(0, 5, "")));
+					lox::transition(lox::FISH_PATH);					
+				}
+				break;
+		}
 	}
+
+
 	for (int i = 0; i < fishList.size(); ++i)
 	{
-		std::cout << fishList[i] << std::endl;
+		printf("%-3d %s\n", i, fishList[i].command.c_str() );
 	}
 	
 	return 0;
