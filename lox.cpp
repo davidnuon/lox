@@ -122,7 +122,7 @@ int main(int argc, char const *argv[])
 	for (int i = 0; i < fishList.size(); ++i)
 	{                                   
         if(DISPLAY_NUMBER) printf("%-3d ", i );
-        if(DISPLAY_TIME)   printf("%-10s ", fishList[i].when.c_str() );
+        if(DISPLAY_TIME)   printf("%-9s ", fishList[i].when.c_str() );
 
       	printf("%s\n", fishList[i].command.c_str() );
 	}
