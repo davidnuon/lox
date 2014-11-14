@@ -69,6 +69,17 @@ std::ostream& operator<<(std::ostream& os, const lox::fishCommand& fish)
 
 int main(int argc, char const *argv[])
 {
+    // Check flags
+    bool DISPLAY_TIME = false;
+    bool DISPLAY_NUMBER = false;
+
+    #define arg_strcmp(FLAG, VAR) if(strcmp(argv[argc], FLAG) == 0) { VAR |= true; continue; }  
+    while(argc--) 
+    {
+        arg_strcmp("-t", DISPLAY_TIME);
+        arg_strcmp("-n", DISPLAY_NUMBER);
+    }
+
 	std::string fishHistoryFilePath = "";
 	fishHistoryFilePath  += getenv("HOME");
 	fishHistoryFilePath  += "/.config/fish/fish_history";
@@ -141,8 +152,11 @@ int main(int argc, char const *argv[])
 
 
 	for (int i = 0; i < fishList.size(); ++i)
-	{
-		printf("%-3d %s\n", i, fishList[i].command.c_str() );
+	{                                   
+        if(DISPLAY_NUMBER) printf("%-3d ", i );
+        if(DISPLAY_TIME)   printf("%-10s ", fishList[i].when.c_str() );
+
+      	printf("%s\n", fishList[i].command.c_str() );
 	}
 	
 	return 0;
