@@ -27,45 +27,9 @@ namespace lox {
 	}
 }
 
-std::string trim(std::string subject) {
-	std::string out; 
-	int front_idx = 0;
-	int back_idx  = subject.length() - 1;
-	char c;
 
-	// Trim the front
-	while(true) 
-	{
-		c = subject.at(front_idx);
-		if(isspace(c)) {
-			front_idx++;
-		} else {
-			break;
-		}
-	}	
-	// Trim the back
-	while(true) 
-	{
-		c = subject.at(back_idx);
-		if(isspace(c)) {
-			back_idx--;
-		} else {
-			break;
-		}
-	}
-
-	return subject.substr(front_idx, back_idx);
-}
-
-std::ostream& operator<<(std::ostream& os, const lox::fishCommand& fish)
-{
-    os << "(Command): " << fish.command << " (When): " << fish.when << " \n";
-    for (int i = 0; i < fish.paths.size(); ++i)
-    {
-    	os << fish.paths[i] << "\n";
-    }
-    return os;
-}
+std::string trim(std::string);
+std::ostream& operator<<(std::ostream&, const lox::fishCommand&);
 
 int main(int argc, char const *argv[])
 {
@@ -73,7 +37,9 @@ int main(int argc, char const *argv[])
     bool DISPLAY_TIME = false;
     bool DISPLAY_NUMBER = false;
 
-    #define arg_strcmp(FLAG, VAR) if(strcmp(argv[argc], FLAG) == 0) { VAR |= true; continue; }  
+    #define arg_strcmp(FLAG, VAR) if(strcmp(argv[argc], FLAG) == 0) \
+    	{ VAR |= true; continue; }  
+    	
     while(argc--) 
     {
         arg_strcmp("-t", DISPLAY_TIME);
@@ -99,8 +65,10 @@ int main(int argc, char const *argv[])
 	}
 
 	bool running = true;
-	#define nextline() running = getline(fishHistoryFile, line); if (line.length() == 0) break;
+	#define nextline() running = getline(fishHistoryFile, line); \
+                       if (line.length() == 0) break;
 	#define current_history() fishList[idx]
+
 	while(running) 
 	{
 		switch(lox::fish_state) 
@@ -160,4 +128,44 @@ int main(int argc, char const *argv[])
 	}
 	
 	return 0;
+}
+
+std::string trim(std::string subject) {
+	std::string out; 
+	int front_idx = 0;
+	int back_idx  = subject.length() - 1;
+	char c;
+
+	// Trim the front
+	while(true) 
+	{
+		c = subject.at(front_idx);
+		if(isspace(c)) {
+			front_idx++;
+		} else {
+			break;
+		}
+	}	
+	// Trim the back
+	while(true) 
+	{
+		c = subject.at(back_idx);
+		if(isspace(c)) {
+			back_idx--;
+		} else {
+			break;
+		}
+	}
+
+	return subject.substr(front_idx, back_idx);
+}
+
+std::ostream& operator<<(std::ostream& os, const lox::fishCommand& fish)
+{
+    os << "(Command): " << fish.command << " (When): " << fish.when << " \n";
+    for (int i = 0; i < fish.paths.size(); ++i)
+    {
+    	os << fish.paths[i] << "\n";
+    }
+    return os;
 }
