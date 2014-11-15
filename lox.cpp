@@ -92,7 +92,7 @@ int main(int argc, char const *argv[])
 				}
 				break;
 			case lox::FISH_TIME:		
-				current_history().when = trim(line.replace(0, 9, ""));
+				current_history().when = trim(line.replace(0, 8, ""));
 				nextline();
 				if(line.find("paths:")) 
 				{
@@ -119,10 +119,21 @@ int main(int argc, char const *argv[])
 	}
 
 
+    char buff[20];
+    time_t timestamp;
 	for (int i = 0; i < fishList.size(); ++i)
 	{                                   
-        if(DISPLAY_NUMBER) printf("%-3d ", i );
-        if(DISPLAY_TIME)   printf("%-10s ", fishList[i].when.c_str() );
+        if(DISPLAY_NUMBER)
+        {
+        	printf("\x1b[36;1m%-3d\x1b[39;49m ", i );
+        }
+        
+        if(DISPLAY_TIME) 
+        {
+        	timestamp = atoi(fishList[i].when.c_str());
+			strftime(buff, 20, "%Y-%m-%d %H:%M:%S", localtime(&timestamp));	
+        	printf("\x1b[32;1m%-20s\x1b[39;49m", buff);
+        }
 
       	printf("%s\n", fishList[i].command.c_str() );
 	}
