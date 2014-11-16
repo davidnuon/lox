@@ -60,7 +60,7 @@ int main(int argc, char const *argv[])
 
 	if(!fishHistoryFile.is_open()) 
 	{
-		std::cout << "Unable to open file!";
+		printf("Unable to open file: %s \nDo you have fish installed? \n\n", fishHistoryFilePath.c_str());
 		exit(1);
 	}
 
@@ -134,7 +134,7 @@ int main(int argc, char const *argv[])
 			strftime(buff, 20, "%Y-%m-%d %H:%M:%S", localtime(&timestamp));	
         	printf("\x1b[32;1m%-20s\x1b[39;49m", buff);
         }
-        
+
       	printf("%s\n", fishList[i].command.c_str() );
 	}
 	
