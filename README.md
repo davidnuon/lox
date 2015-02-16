@@ -5,4 +5,4 @@ Utility to make fish history a bit more useful. Displays a list of recent comman
 
 ## Usage
   
-  lox 
+    lox 
