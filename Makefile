@@ -11,10 +11,10 @@ all: $(SOURCES) $(EXECUTABLE)
 	$(CC) $(CFLAGS) $(SOURCES) -o $@
 
 install:
-	install ./lox /usr/bin/lox
+	install ./lox /usr/local/bin/lox
 
 uninstall:
-	rm /usr/bin/lox
+	rm /usr/local/bin/lox
 
 clean:
 	rm ./lox
